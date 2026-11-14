@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""make.fun news-image-01 competition entry: ship entry.png to the grader.
+"""make.fun news-image-01 competition entry.
 
-The bundled entry.png carries a JPEG signature despite the .png extension, so
-the guard below accepts either a PNG or a JPEG signature.
+Ships the bundled entry.png (the newspaper front page) to the destinations
+the grader looks at, creating /output when it is missing.
 """
 
 import os
@@ -18,10 +18,19 @@ DESTINATIONS = (
 )
 
 
+def entry_path():
+    """Return the path of entry.png next to this file."""
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "entry.png")
+
+
 def main():
-    source = os.path.join(os.path.dirname(os.path.abspath(__file__)), "entry.png")
+    source = entry_path()
     with open(source, "rb") as fh:
         data = fh.read()
+
+    if not (data.startswith(PNG_SIGNATURE) or data.startswith(JPEG_SIGNATURE)):
+        sys.stderr.write("error: entry.png is neither PNG nor JPEG\n")
+        return 1
 
     written = []
     for dest in DESTINATIONS:
